@@ -1,10 +1,13 @@
 
-def womp(user,system):
-    print("Womp womp")
+def Print(user,system,Param):
+    for i in Param:
+        print(i,end=' ')
+    print('\n')
+    
+FUNCTION_MAP={'PRINT':Print}
 
 
 
-FUNCTION_MAP={"WOMP":womp}
 def parse(Input, user, system):
     try:
         Input = Input.split()
@@ -20,7 +23,7 @@ def parse(Input, user, system):
             Action, *Param = Input
             if Action in FUNCTION_MAP:
                 
-                return FUNCTION_MAP[Input[0]](user, Param, system)
+                return FUNCTION_MAP[Input[0]](user,system,Param)
             else:
                 return "Working on it"
     except Exception as e:
