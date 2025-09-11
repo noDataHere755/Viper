@@ -16,6 +16,7 @@ try:
             msg = gen.send(a)
         elif msg=="None":
             msg=next(gen)
+        
         else:
             print(msg)
             msg = next(gen)
