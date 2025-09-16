@@ -6,26 +6,22 @@ from viper import commands
 
 #Classes:
 class User:
-    def __init__(self,userName,appsList,pluginsList):
+    def __init__(self,userName,pluginsList):
         self.userName=userName
-        self.appsList=appsList
+        
         self.pluginsList=pluginsList
 class System:
     def __init__(self,baseDir,goAhead):
         self.baseDir=baseDir
 #Functions:
 def initUser(name,baseDir):
-    appsList=[]
-    f=os.path.join(baseDir,"Apps")
-    for file in os.listdir(f):
-        if file.endswith(".py"):
-            appsList.append(file)
+    
     pluginsList=[]
     f=os.path.join(baseDir,"Plugins")
     for file in os.listdir(f):
         if file.endswith(".py"):
             pluginsList.append(file)
-    return name,appsList,pluginsList
+    return name,pluginsList
             
     
 
@@ -50,8 +46,8 @@ def strt():
             with open(file, 'w') as f:
                 f.write(f"{name}:{put.decode()}")  # store hash as string
             yield "[SUCCESS]:Account created!"
-            name, appsList, pluginsList = initUser(name, system.baseDir)
-            user = User(name, appsList, pluginsList)
+            name,pluginsList = initUser(name, system.baseDir)
+            user = User(name,pluginsList)
             goAhead = True
         else:
             yield "[ERROR]: Both don't match. Get checked for dementia."
@@ -71,8 +67,8 @@ def strt():
             if bcrypt.checkpw(guess, stored_hash):
                 yield "[INFO]:Logging in..."
                 yield "[SUCCESS]:Logged in"
-                name, appsList, pluginsList = initUser(u, system.baseDir)
-                user = User(name, appsList, pluginsList)
+                name, pluginsList = initUser(u, system.baseDir)
+                user = User(name,pluginsList)
                 goAhead = True
                 break
             else:
