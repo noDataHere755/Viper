@@ -33,7 +33,7 @@ def pluginCall(Input,user,system,Length):
                 if hasattr(module,"FUNCTION_MAP") and isinstance(module.FUNCTION_MAP,dict):
                     if Length==1 and Input[0] in module.FUNCTION_MAP:
                         return module.FUNCTION_MAP[Input[0]](user,system)
-                    elif Length==2 and Input[0] in module.FUNCTION_MAP:
+                    elif Length>=2 and Input[0] in module.FUNCTION_MAP:
                         Action,*Param=Input
                         return module.FUNCTION_MAP[Input[0]](user,system,Param)
                     else:

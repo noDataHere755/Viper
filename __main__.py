@@ -14,6 +14,7 @@ try:
         elif msg.endswith('>'):
             a = input(msg + ' ')
             msg = gen.send(a)
+        
         elif msg=="None":
             msg=next(gen)
         
