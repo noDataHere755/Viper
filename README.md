@@ -39,9 +39,15 @@ If you add an entry point later, you’ll be able to just type `viper`.
 
 ## Commands List
 ```
-PRINT [thing]  → prints thing to console (thing is treated as a string)
+PRINT thing  → prints thing to console (thing is treated as a string)
 WHOAMI         → displays your username
+TODO see       → shows your to-do list
+TODO add task  → adds a task
+TODO complete task → checks off a task for you, you can specify either index (1,2...) or task name
+TODO cancel task → cancels the task specified, specification is just like complete
 ```
+BTW, the TODO plugin fills up a neat little stats.txt in Viper/Data/stats.txt in the format date: tasks done: tasks completed
+Y'know, just in case you wanna keep your glorious record of procrastination for future you to spit on
 
 That’s all for now. But why wait for me when you can add your own neat stuff...
 
