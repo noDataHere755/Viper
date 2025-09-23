@@ -18,7 +18,7 @@ def stats(baseDir,chtype,c):
             b=int(b)
             
         if d!=tDate:
-            with open(os.path.join(baseDir,"Data", "stats.txt"),'w') as f:
+            with open(os.path.join(baseDir,"Data", "stats.txt"),'a') as f:
                 f.write('\n')
                 f.write(f"{tDate}:0,0")
                 a=0
@@ -140,7 +140,7 @@ def todo(user,system,Param):
                         val=ntaskDic[item]
                         f.write(f'{item}:{val}')
                         f.write('\n')
-                stats(system.baseDir, 'tasksC','+')
+            stats(system.baseDir, 'tasksC','+')
     elif Param[0]=="cancel":
         if os.stat(os.path.join(system.baseDir,"Data", "tasks.txt")).st_size==0:
             print("Welp, you have no tasks to cancel. Loser.")
@@ -203,7 +203,7 @@ def todo(user,system,Param):
                         val=ntaskDic[item]
                         f.write(f'{item}:{val}')
                         f.write('\n')
-                stats(system.baseDir, 'tasksS','+')   
+            stats(system.baseDir, 'tasksS','-')   
                            
                         
                                                 
