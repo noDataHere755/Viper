@@ -1,49 +1,57 @@
 
-def stats(baseDir,chtype,c):
+def stats(baseDir, chtype, c):
     import os
     from datetime import date
-    tDate=str(date.today())
-    if os.stat(os.path.join(baseDir,"Data", "stats.txt")).st_size==0:
-        
-        with open(os.path.join(baseDir,"Data", "stats.txt"),'w') as f:
-            f.write(f"{tDate}:0,0")
-            a=0
-            b=0
+    file_path = os.path.join(baseDir, "Data", "stats.txt")
+    today = date.today().isoformat()  # 'YYYY-MM-DD'
+
+    # Ensure the file exists
+    if not os.path.exists(file_path) or os.stat(file_path).st_size == 0:
+        with open(file_path, 'w') as f:
+            f.write(f"{today}:0,0\n")
+        a = b = 0
     else:
-        with open(os.path.join(baseDir,"Data", "stats.txt"),'r') as f:
-            l=f.readlines()[-1].strip()
-            d,v=l.split(':')
-            a,b=v.split(',')
-            a=int(a)
-            b=int(b)
-            
-        if d!=tDate:
-            with open(os.path.join(baseDir,"Data", "stats.txt"),'a') as f:
-                f.write('\n')
-                f.write(f"{tDate}:0,0")
-                a=0
-                b=0
-   
-    if chtype=='tasksS':
-        if c=='+':
-            newB=b+1
-        elif c=='-':
-            newB=b-1
-        with open(os.path.join(baseDir,"Data", "stats.txt"),'r') as f:
-            lines=f.readlines()
-        lines[-1]=f"{tDate}:{a},{newB}"
-        with open(os.path.join(baseDir,"Data", "stats.txt"),'w') as f:
-            f.writelines(lines)
-    elif chtype=='tasksC':
-        if c=='+':
-            newA=a+1
-        elif c=='-':
-            newA=a-1
-        with open(os.path.join(baseDir,"Data", "stats.txt"),'r') as f:
-            lines=f.readlines()
-        lines[-1]=f"{tDate}:{newA},{b}"
-        with open(os.path.join(baseDir,"Data", "stats.txt"),'w') as f:
-            f.writelines(lines)    
+        # Read all non-empty lines
+        with open(file_path, 'r') as f:
+            lines = [line.strip() for line in f if line.strip()]
+
+        # Parse last line
+        last_line = lines[-1]
+        try:
+            d, v = last_line.split(':')
+            a, b = map(int, v.split(','))
+        except ValueError:
+            # If line is malformed, reset counts
+            d = today
+            a = b = 0
+
+        # Add new line for today if last date isn't today
+        if d != today:
+            lines.append(f"{today}:0,0")
+            a = b = 0
+
+    # Update counters
+    if chtype == 'tasksS':
+        if c == '+':
+            b += 1
+        elif c == '-':
+            b -= 1
+    elif chtype == 'tasksC':
+        if c == '+':
+            a += 1
+        elif c == '-':
+            a -= 1
+
+    # Replace or append today's line
+    updated_line = f"{today}:{a},{b}"
+    if 'lines' in locals() and lines[-1].startswith(today):
+        lines[-1] = updated_line
+    else:
+        lines.append(updated_line)
+
+    # Write back all lines
+    with open(file_path, 'w') as f:
+        f.write("\n".join(lines) + "\n")
             
         
                 
@@ -205,7 +213,43 @@ def todo(user,system,Param):
                         f.write('\n')
             stats(system.baseDir, 'tasksS','-')   
                            
-                        
+    elif Param[0]=="stats":
+
+        from datetime import date, timedelta, datetime
+
+        tDate = date.today()
+        statsDic = {}
+
+        a = os.path.join(system.baseDir, "Data", "stats.txt")
+
+# Load stats.txt into dict
+        with open(a, 'r') as f:
+            for line in f:
+                d, v = line.strip().split(":")
+                statsDic[d] = v
+
+# If user wants last week
+        if Param[1] == "week":
+            oDate = tDate - timedelta(days=6)  # keep it as a date!
+
+# Output dict
+        result = {}
+
+# Iterate through stats dictionary
+        for item in statsDic:
+            citem = datetime.strptime(item, "%Y-%m-%d").date()  # parse string key to date
+            if citem == oDate:
+                result[item] = statsDic[item]
+            elif oDate < citem <= tDate:  # strictly within week up to today
+                result[item] = statsDic[item]
+
+# Print results
+        for item in result:
+            print(item, ":", result[item])
+                
+            
+                    
+                                    
                                                 
                         
                 
