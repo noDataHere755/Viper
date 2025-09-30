@@ -45,8 +45,12 @@ TODO see       → shows your to-do list
 TODO add task  → adds a task
 TODO complete task → checks off a task for you, you can specify either index (1,2...) or task name
 TODO cancel task → cancels the task specified, specification is just like complete
+TODO stats period→ prints out your awesome(read: absolutely trash) productivity data with period being either a number or 'week'
 ```
-BTW, the TODO plugin fills up a neat little stats.txt in Viper/Data/stats.txt in the format date: tasks done: tasks completed
+BTW, the TODO plugin fills up a neat little stats.csv in Viper/Data/stats.csv with the columns:
+```
+date,tasks_done,tasks_scheduled
+```
 Y'know, just in case you wanna keep your glorious record of procrastination for future you to spit on
 
 That’s all for now. But why wait for me when you can add your own neat stuff...

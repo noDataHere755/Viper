@@ -2,24 +2,31 @@
 def stats(baseDir, chtype, c):
     import os
     from datetime import date
-    file_path = os.path.join(baseDir, "Data", "stats.txt")
+    import csv
+    file_path = os.path.join(baseDir, "Data", "stats.csv")
     today = date.today().isoformat()  # 'YYYY-MM-DD'
 
     # Ensure the file exists
     if not os.path.exists(file_path) or os.stat(file_path).st_size == 0:
-        with open(file_path, 'w') as f:
-            f.write(f"{today}:0,0\n")
+        with open(file_path, 'w',newline="") as f:
+            writer=csv.writer(f)
+
+            writer.writerow(["date","tasks_done","tasks_scheduled"])
+            writer.writerow([str(today),0,0])
+        lines=[["date","tasks_done","tasks_scheduled"],[str(today),0,0]]
         a = b = 0
     else:
         # Read all non-empty lines
-        with open(file_path, 'r') as f:
-            lines = [line.strip() for line in f if line.strip()]
+        with open(file_path, 'r',newline="") as f:
+            lines = list(csv.reader(f))
+        
 
         # Parse last line
-        last_line = lines[-1]
+        x=lines[-1]
         try:
-            d, v = last_line.split(':')
-            a, b = map(int, v.split(','))
+          d,a,b=x
+          a=int(a)
+          b=int(b)
         except ValueError:
             # If line is malformed, reset counts
             d = today
@@ -27,7 +34,7 @@ def stats(baseDir, chtype, c):
 
         # Add new line for today if last date isn't today
         if d != today:
-            lines.append(f"{today}:0,0")
+            lines.append([str(today),0,0])
             a = b = 0
 
     # Update counters
@@ -43,16 +50,16 @@ def stats(baseDir, chtype, c):
             a -= 1
 
     # Replace or append today's line
-    updated_line = f"{today}:{a},{b}"
-    if 'lines' in locals() and lines[-1].startswith(today):
+    updated_line = [str(today),a,b]
+    if lines[-1][0]==today:
         lines[-1] = updated_line
     else:
         lines.append(updated_line)
 
     # Write back all lines
-    with open(file_path, 'w') as f:
-        f.write("\n".join(lines) + "\n")
-            
+    with open(file_path, 'w',newline="") as f:
+        writer=csv.writer(f)
+        writer.writerows(lines)            
         
                 
         
@@ -213,43 +220,44 @@ def todo(user,system,Param):
                         f.write('\n')
             stats(system.baseDir, 'tasksS','-')   
                            
-    elif Param[0]=="stats":
-
+    elif Param[0] == "stats":
+        import csv
         from datetime import date, timedelta, datetime
+        import os
 
         tDate = date.today()
         statsDic = {}
 
-        a = os.path.join(system.baseDir, "Data", "stats.txt")
+        a = os.path.join(system.baseDir, "Data", "stats.csv")
 
-# Load stats.txt into dict
-        with open(a, 'r') as f:
-            for line in f:
-                d, v = line.strip().split(":")
-                statsDic[d] = v
+    # Load stats.csv into dict
+        with open(a, 'r', newline="") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                statsDic[row["date"]] = {
+                    "done": int(row["tasks_done"]),
+                    "scheduled": int(row["tasks_scheduled"])
+                }
 
-# If user wants last week
+    # If user wants last week
         if Param[1] == "week":
-            oDate = tDate - timedelta(days=6)  # keep it as a date!
-
-# Output dict
-        result = {}
-
-# Iterate through stats dictionary
-        for item in statsDic:
-            citem = datetime.strptime(item, "%Y-%m-%d").date()  # parse string key to date
-            if citem == oDate:
-                result[item] = statsDic[item]
-            elif oDate < citem <= tDate:  # strictly within week up to today
-                result[item] = statsDic[item]
-
-# Print results
-        for item in result:
-            print(item, ":", result[item])
-                
+            oDate = tDate - timedelta(days=6)  # 7-day window
+        else:
+            oDate=tDate-timedelta(days=int(Param[1]))
             
-                    
-                                    
+        # Filter stats within the date range
+        result = {
+            item: statsDic[item]
+            for item in statsDic
+                if oDate <= datetime.strptime(item, "%Y-%m-%d").date() <= tDate
+            }
+
+        # Print results
+        for item, vals in sorted(result.items()):
+            print(item, ":", vals)
+
+        
+        
                                                 
                         
                 
