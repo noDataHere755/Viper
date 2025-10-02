@@ -3,11 +3,13 @@ import sys
 from pathlib import Path
 import os
 def Print(user,system,Param):
+    x=''
     for i in Param:
-        print(i,end=' ')
-    print('\n')
+        x+=i
+        x+=' '
+    print(x)
 def Whoami(user,system):
-    print(f"You're {user.userName}, unc. Seems like your username is just like your new year's resolution.")
+    return f"You're {user.userName}, unc. Seems like your username is just like your new year's resolution."
 FUNCTION_MAP={'PRINT':Print,'WHOAMI':Whoami}
 
 def pluginCall(Input,user,system,Length):
