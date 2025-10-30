@@ -229,37 +229,11 @@ def todo(user, system, Param):
             }
             for item, vals in sorted(result.items()):
                 output += f"{item}: {vals}\n"
-        elif Param[0]=="analyze":
-            import pandas as pd
-            try:
-                stats_file = f"{system.baseDir}/Data/stats.csv"
-                df = pd.read_csv(stats_file, parse_dates=["date"])
-
-        # Total tasks done and scheduled
-                total_done = df["tasks_done"].sum()
-                total_scheduled = df["tasks_scheduled"].sum()
-
-        # Avoid division by zero
-                avg_completion = (total_done / total_scheduled) if total_scheduled else 0
-
-                output = (
-                    f"Total tasks done: {total_done}\n"
-                    f"Total tasks scheduled: {total_scheduled}\n"
-                    f"Average completion rate: {avg_completion:.2f}\n"
-                )
-
-            except FileNotFoundError:
-                output = "[ERROR]: stats.csv not found. Maybe you haven't added any tasks yet."
-            except Exception as e:
-                output = f"[ERROR]: {type(e).__name__}. Something went wrong reading stats.csv."
-
-    
-
         else:
-            output = f"[ERROR]: Invalid command {Param[1]}. You really are trying my patience."
+            output="No such command. You really are trying my patience."
 
     except Exception as e:
-        output = f"[ERROR]: {type(e).__name__}. Naturally, something went wrong. I predicted this. With my luck, everything always does."
+        output = f"{e}. I predicted it."
 
     return output    
     
