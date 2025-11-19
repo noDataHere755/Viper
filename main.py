@@ -6,22 +6,19 @@ from viper import commands
 
 #Classes:
 class User:
-    def __init__(self,userName,pluginsList):
+    def __init__(self,userName,plugins):
         self.userName=userName
         
-        self.pluginsList=pluginsList
+        self.plugins=plugins
 class System:
     def __init__(self,baseDir,goAhead):
         self.baseDir=baseDir
 #Functions:
 def initUser(name,baseDir):
     
-    pluginsList=[]
-    f=os.path.join(baseDir,"Plugins")
-    for file in os.listdir(f):
-        if file.endswith(".py"):
-            pluginsList.append(file)
-    return name,pluginsList
+    
+    plugins=commands.init(baseDir)
+    return name,plugins
             
     
 
@@ -46,8 +43,9 @@ def strt():
             with open(file, 'w') as f:
                 f.write(f"{name}:{put.decode()}")  # store hash as string
             yield "[SUCCESS]:Account created!"
-            name,pluginsList = initUser(name, system.baseDir)
-            user = User(name,pluginsList)
+            name,plugins = initUser(name, system.baseDir)
+            
+            user = User(name,plugins)
             goAhead = True
         else:
             yield "[ERROR]: Both don't match. Get checked for dementia."
@@ -67,8 +65,8 @@ def strt():
             if bcrypt.checkpw(guess, stored_hash):
                 yield "[INFO]:Logging in..."
                 yield "[SUCCESS]:Logged in"
-                name, pluginsList = initUser(u, system.baseDir)
-                user = User(name,pluginsList)
+                name, plugins= initUser(u, system.baseDir)
+                user = User(name,plugins)
                 goAhead = True
                 break
             else:
